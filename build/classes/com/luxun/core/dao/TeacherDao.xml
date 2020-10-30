@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.luxun.core.dao.TeacherDao">
+    <!--SQL片段  -->
+    <sql id="selectTeacherListWhere">
+        <where>
+	       <if test="username != null" >
+	           username like "%"#{username}"%"
+	       </if>
+	       <if test="teacherid != null" >
+	        and teacherid = #{teacherid}
+	       </if>
+	       <if test="birthday != null" >
+	        and birthday = #{birthday}
+	       </if>
+	       <if test="work != null" >
+	        and work = #{work}
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询教师列表  -->
+	<select id="selectTeacherList" parameterType="teacher" 
+                                           resultType="teacher">
+		SELECT
+			id,
+			username,
+			sex,
+			teacherid,
+			password,
+			country,
+			role,
+			birthday,
+			createtime,
+			work
+		FROM
+			teacher a
+		<include refid="selectTeacherListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	<!-- 查询客户总数 -->
+	<select id="selectTeacherListCount" parameterType="teacher" 
+                                                 resultType="Integer">
+		select count(*) from teacher
+		<include refid="selectTeacherListWhere"/>
+	</select>	
+	
+	<!-- 添加客户 -->
+	<insert id="createTeacher" parameterType="teacher">
+	    insert into teacher(
+	                    username,
+			            sex,
+			            teacherid,
+			            password,
+			            country,
+			            role,
+			            birthday,
+			            createtime,
+			            work
+	             )
+	             values(#{username},
+	                    #{sex},
+	                    #{teacherid},
+	                    #{password},
+	                    #{country},
+	                    #{role},
+	                    #{birthday},
+	                    #{createtime},
+	                    #{work}
+	            )
+	</insert>
+	<!-- 根据id获取客户信息 -->
+	<select id="getTeacherById" parameterType="Integer" 
+	resultType="teacher">
+	    select * from teacher where id = #{id}
+	</select>
+	<!-- 更新客户 -->
+	<update id="updateTeacher" parameterType="teacher">
+	    update teacher
+	    <set>
+	        <if test="username!=null">
+	            username=#{username},
+	        </if>
+	        <if test="sex!=null">
+	            sex=#{sex},
+	        </if>
+	        <if test="teacherid!=null">
+	            teacherid=#{teacherid},
+	        </if>
+	        <if test="password!=null">
+	            password=#{password},
+	        </if>
+	        <if test="country!=null">
+	            country=#{country},
+	        </if>
+	        <if test="role!=null">
+	            role=#{role},
+	        </if>
+	        <if test="birthday!=null">
+	            birthday=#{birthday},
+	        </if>
+	        <if test="createtime!=null">
+	            createtime=#{createtime},
+	        </if>
+	        <if test="work!=null">
+	            work=#{work},
+	        </if>
+	    </set>
+	    where id=#{id}
+	</update>
+	<!-- 删除客户 -->
+	<delete id="deleteTeacher" parameterType="Integer">
+	    delete from teacher where id=#{id}
+	</delete>
+</mapper>

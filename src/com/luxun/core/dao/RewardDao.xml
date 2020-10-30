@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.luxun.core.dao.RewardDao">
+    <!--SQL片段  -->
+    <sql id="selectRewardListWhere">
+        <where>
+	       <if test="name != null" >
+	           name like "%"#{name}"%"
+	       </if>
+	       <if test="grand != null" >
+	        and grand = #{grand}
+	       </if>
+	       <if test="userid != null" >
+	        and userid = #{userid} 
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询课程列表  -->
+	<select id="selectRewardList" parameterType="reward" 
+                                           resultType="reward">
+		SELECT
+			id,
+			createtime,
+			grand,
+			name,
+			type,
+			userid
+		FROM
+			reward
+		<include refid="selectRewardListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询课程总数 -->
+	<select id="selectRewardListCount" parameterType="reward" 
+                                                 resultType="Integer">
+		select count(*) from reward
+		 <include refid="selectRewardListWhere"/> 
+	</select>	
+	<!-- 添加课程 -->
+	<insert id="createReward" parameterType="reward">
+	    insert into reward(
+	                     createtime,
+			             grand,
+			             name,
+			             type,
+			             userid
+	             )
+	             values(#{createtime},
+	                    #{grand},
+	                    #{name},
+	                    #{type},
+	                    #{userid}
+	            )
+	</insert>
+	<!-- 根据id获取课程信息 -->
+	<select id="getRewardById" parameterType="Integer" 
+	resultType="reward">
+	   select * from reward where id = #{id}
+	</select>	
+	<!-- 更新课程 -->
+	<update id="updateReward" parameterType="reward">
+	    update reward
+	    <set>
+	        <if test="createtime !=null">
+	            createtime=#{createtime},
+	        </if>
+	        <if test="grand !=null">
+	            grand=#{grand},
+	        </if>
+	        <if test="name !=null">
+	            name=#{name},
+	        </if>
+	        <if test="type !=null">
+	            type=#{type},
+	        </if>
+	        <if test="userid !=null">
+	            userid=#{userid},
+	        </if>
+	    </set>
+	    where id =#{id}
+	</update>
+	<!-- 删除课程 -->
+	<delete id="deleteReward" parameterType="Integer">
+	    delete from reward where id=#{id}
+	</delete>
+</mapper>

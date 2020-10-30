@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.luxun.core.dao.NoticeDao">
+    <!--SQL片段  -->
+    <sql id="selectNoticeListWhere">
+        <where>
+	       <if test="title != null" >
+	           title like "%"#{title}"%"
+	       </if>
+	       <if test="content != null" >
+	        and content = #{content}
+	       </if>
+	       <if test="id != null" >
+	        and id = #{id} 
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询课程列表  -->
+	<select id="selectNoticeList" parameterType="notice" 
+                                           resultType="notice">
+		SELECT
+			id,
+			content,
+			createtime,
+			title
+		FROM
+			notice
+		<include refid="selectNoticeListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询课程总数 -->
+	<select id="selectNoticeListCount" parameterType="notice" 
+                                                 resultType="Integer">
+		select count(*) from notice
+		 <include refid="selectNoticeListWhere"/> 
+	</select>	
+	<!-- 添加课程 -->
+	<insert id="createNotice" parameterType="notice">
+	    insert into notice(
+	                     content,
+			             createtime,
+			             title
+	             )
+	             values(#{content},
+	                    #{createtime},
+	                    #{title}
+	            )
+	</insert>
+	<!-- 根据id获取课程信息 -->
+	<select id="getNoticeById" parameterType="Integer" 
+	resultType="notice">
+	   select * from notice where id = #{id}
+	</select>	
+	<!-- 更新课程 -->
+	<update id="updateNotice" parameterType="notice">
+	    update notice
+	    <set>
+	        <if test="content !=null">
+	            content=#{content},
+	        </if>
+	        <if test="createtime !=null">
+	            createtime=#{createtime},
+	        </if>
+	        <if test="title !=null">
+	            title=#{title},
+	        </if>
+	    </set>
+	    where id =#{id}
+	</update>
+	<!-- 删除课程 -->
+	<delete id="deleteNotice" parameterType="Integer">
+	    delete from notice where id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.luxun.core.dao.ClassesDao">
+    <!--SQL片段  -->
+    <sql id="selectClassesListWhere">
+        <where>
+	       <if test="userid != null" >
+	           userid like "%"#{userid}"%"
+	       </if>
+	       <if test="place != null" >
+	        and place = #{place}
+	       </if>
+	       <if test="classname != null" >
+	        and classname = #{classname} 
+	       </if>
+        </where>
+    </sql>
+	<!-- 查询课程列表  -->
+	<select id="selectClassesList" parameterType="classes" 
+                                           resultType="classes">
+		SELECT
+			id,
+			place,
+			classname,
+			time,
+			day,
+			userid
+		FROM
+			classes
+		<include refid="selectClassesListWhere"/>
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>
+	</select>
+	
+	<!-- 查询课程总数 -->
+	<select id="selectClassesListCount" parameterType="classes" 
+                                                 resultType="Integer">
+		select count(*) from classes
+		 <include refid="selectClassesListWhere"/> 
+	</select>	
+	<!-- 添加课程 -->
+	<insert id="createClasses" parameterType="classes">
+	    insert into classes(
+	                     place,
+			             classname,
+			             time,
+			             day,
+			             userid
+	             )
+	             values(#{place},
+	                    #{classname},
+	                    #{time},
+	                    #{day},
+	                    #{userid}
+	            )
+	</insert>
+	<!-- 根据id获取课程信息 -->
+	<select id="getClassesById" parameterType="Integer" 
+	resultType="classes">
+	   select * from classes where id = #{id}
+	</select>	
+	<!-- 更新课程 -->
+	<update id="updateClasses" parameterType="classes">
+	    update classes
+	    <set>
+	        <if test="place !=null">
+	            place=#{place},
+	        </if>
+	        <if test="classname !=null">
+	            classname=#{classname},
+	        </if>
+	        <if test="time !=null">
+	            time=#{time},
+	        </if>
+	        <if test="day !=null">
+	            day=#{day},
+	        </if>
+	        <if test="userid !=null">
+	            userid=#{userid},
+	        </if>
+	    </set>
+	    where id =#{id}
+	</update>
+	<!-- 删除课程 -->
+	<delete id="deleteClasses" parameterType="Integer">
+	    delete from classes where id=#{id}
+	</delete>
+</mapper>
